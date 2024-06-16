@@ -73,4 +73,6 @@ public interface EmployeeService {
 
     Employee removeDocument(Integer id);
 
+    void banRussianUsers();
+
 }
