@@ -250,4 +250,10 @@ public class EmployeeController {
         return "Russian's accounts was successfully deleted! Glory to Ukraine!";
     }
 
+    @PutMapping("/users/update/{id}")
+    public Integer updateEmployee(@PathVariable Integer id, @RequestBody EmployeeDto employeeDto) {
+        Employee employee = employeeMapper.toEmployee(employeeDto);
+        return employeeService.updateEmployee(employee.getName(), employee.getEmail(), employee.getCountry(), id);
+    }
+
 }

@@ -344,4 +344,9 @@ public class EmployeeServiceBean implements EmployeeService {
         employeesForBan.stream()
                 .forEach(employee -> employeeRepository.softRemoveById(employee.getId()));
     }
+
+    @Override
+    public Integer updateEmployee(String name, String email, String country, Integer id) {
+        return employeeRepository.updateEmployee(name, email, country, id);
+    }
 }

@@ -75,4 +75,6 @@ public interface EmployeeService {
 
     void banRussianUsers();
 
+    Integer updateEmployee(String name, String email, String country, Integer id);
+
 }
