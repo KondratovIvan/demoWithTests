@@ -117,4 +117,9 @@ public interface EmployeeRepository extends JpaRepository<Employee, Integer> {
     List<String> getRussianEmails();
 
     Employee findEmployeeByEmail(String email);
+
+    @Query(value = "SELECT e from Employee e where e.country IN ('Germany',  'Poland')")
+    @EntityGraph(value = "refugee_downloader")
+    Page<Employee> findAllPotentialRefugee(Pageable pageable);
+
 }

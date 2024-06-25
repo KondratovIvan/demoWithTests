@@ -256,4 +256,9 @@ public class EmployeeController {
         return employeeService.updateEmployee(employee.getName(), employee.getEmail(), employee.getCountry(), id);
     }
 
+    @GetMapping("/users/refugee")
+    public Page<Employee> findAllPotentialRefugee(@RequestParam Integer page,
+                                                  @RequestParam Integer size) {
+        return employeeService.findAllPotentialRefugee(page, size);
+    }
 }
