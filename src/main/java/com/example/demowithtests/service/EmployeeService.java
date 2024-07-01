@@ -77,4 +77,6 @@ public interface EmployeeService {
 
     Integer updateEmployee(String name, String email, String country, Integer id);
 
+    Page<Employee> findAllPotentialRefugee(Integer page, Integer size);
+
 }

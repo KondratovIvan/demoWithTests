@@ -352,4 +352,11 @@ public class EmployeeServiceBean implements EmployeeService {
     public Integer updateEmployee(String name, String email, String country, Integer id) {
         return employeeRepository.updateEmployee(name, email, country, id);
     }
+
+    @Override
+    public Page<Employee> findAllPotentialRefugee(Integer page, Integer size) {
+        Pageable pageable = PageRequest.of(page, size);
+        return employeeRepository.findAllPotentialRefugee(pageable);
+    }
+
 }
