@@ -35,4 +35,14 @@ public class EmployeeReadDto {
     public Date date = Date.from(Instant.now());
 
     public Gender gender;
+
+    public EmployeeReadDto(Integer id, String name, String country, String email, Set<AddressDto> addresses, Date date, Gender gender) {
+        this.id = id;
+        this.name = name;
+        this.country = country;
+        this.email = email;
+        this.addresses = addresses != null ? addresses : new HashSet<>();
+        this.date = date;
+        this.gender = gender;
+    }
 }

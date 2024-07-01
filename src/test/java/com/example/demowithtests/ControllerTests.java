@@ -5,6 +5,8 @@ import com.example.demowithtests.dto.EmployeeDto;
 import com.example.demowithtests.dto.EmployeeReadDto;
 import com.example.demowithtests.service.EmployeeService;
 import com.example.demowithtests.service.EmployeeServiceEM;
+import com.example.demowithtests.service.document.DocumentService;
+import com.example.demowithtests.util.mappers.DocumentMapper;
 import com.example.demowithtests.util.mappers.EmployeeMapper;
 import com.example.demowithtests.web.EmployeeController;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -38,6 +40,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -58,7 +61,13 @@ public class ControllerTests {
     EmployeeServiceEM serviceEM;
 
     @MockBean
+    DocumentService documentService;
+
+    @MockBean
     EmployeeMapper employeeMapper;
+
+    @MockBean
+    DocumentMapper documentMapper;
 
     @Autowired
     private MockMvc mockMvc;
@@ -127,7 +136,8 @@ public class ControllerTests {
     @WithMockUser(roles = "USER")
     public void getPassByIdTest() throws Exception {
 
-        var response = new EmployeeReadDto();
+        var response = new EmployeeReadDto(1, "Mike",
+                null, null, null, null, null);
         response.id = 1;
         response.name = "Mike";
 
@@ -153,7 +163,8 @@ public class ControllerTests {
     @DisplayName("PUT API -> /api/users/{id}")
     @WithMockUser(roles = "ADMIN")
     public void updatePassByIdTest() throws Exception {
-        var response = new EmployeeReadDto();
+        var response = new EmployeeReadDto(1, null,
+                null, null, null, null, null);
         response.id = 1;
         var employee = Employee.builder().id(1).build();
 
@@ -204,9 +215,12 @@ public class ControllerTests {
         Page<Employee> employeesPage = new PageImpl<>(list);
         Pageable pageable = PageRequest.of(0, 5);
 
-        EmployeeReadDto dto = new EmployeeReadDto();
-        EmployeeReadDto dtoTwo = new EmployeeReadDto();
-        EmployeeReadDto dtoThree = new EmployeeReadDto();
+        EmployeeReadDto dto = new EmployeeReadDto(1, "John", "US",
+                null, null, null, null);
+        EmployeeReadDto dtoTwo = new EmployeeReadDto(2, "Jane", "UK",
+                null, null, null, null);
+        EmployeeReadDto dtoThree = new EmployeeReadDto(3, "Bob", "US",
+                null, null, null, null);
 
         when(service.getAllWithPagination(eq(pageable))).thenReturn(employeesPage);
         when(employeeMapper.toEmployeeReadDto(employee)).thenReturn(dto);
@@ -229,6 +243,22 @@ public class ControllerTests {
         assertTrue(contentType.contains(MediaType.APPLICATION_JSON_VALUE));
         String responseContent = result.getResponse().getContentAsString();
         assertNotNull(responseContent);
+    }
+
+    @Test
+    @DisplayName("PUT API -> /api/users/ban/russians")
+    @WithMockUser(roles = "ADMIN")
+    public void banRussianEmployeesTest() throws Exception {
+        doNothing().when(service).banRussianUsers();
+
+        MvcResult result = mockMvc.perform(put("/api/users/ban/russians").with(csrf()))
+                .andExpect(status().isOk())
+                .andReturn();
+
+        verify(service).banRussianUsers();
+
+        String contentType = result.getResponse().getContentType();
+        assertNotNull(contentType);
     }
 
 }
