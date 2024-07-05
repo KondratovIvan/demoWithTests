@@ -4,7 +4,9 @@ import com.example.demowithtests.domain.Address;
 import com.example.demowithtests.domain.Employee;
 import com.example.demowithtests.domain.Gender;
 import com.example.demowithtests.repository.EmployeeRepository;
+import org.aspectj.lang.annotation.Before;
 import org.assertj.core.api.Assertions;
+import org.flywaydb.core.Flyway;
 import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
@@ -12,6 +14,7 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
 import org.springframework.test.annotation.Rollback;
 
 import java.util.HashSet;
+import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 
@@ -155,6 +158,31 @@ public class RepositoryTests {
 
         Employee foundEmployee = employeeRepository.findEmployeeByEmailNotNull();
         assertNotNull(foundEmployee.getEmail() != null);
+    }
+
+    @Test
+    public void softRemoveByIdTest() {
+        Employee employee = new Employee();
+        employee.setName("John");
+        employee.setEmail("john@gmail.com");
+
+        employeeRepository.save(employee);
+
+        employeeRepository.softRemoveById(employee.getId());
+        Employee deletedEmployee = employeeRepository.findById(employee.getId()).get();
+
+        assertTrue(employeeRepository.findIsDeletedByEmployeeId(deletedEmployee.getId()));
+    }
+
+    @Test
+    public void testGetRussianEmails() {
+
+        Employee russianEmployee = Employee.builder().email("testmail@vk.com").build();
+        employeeRepository.save(russianEmployee);
+
+        List<String> emails = employeeRepository.getRussianEmails();
+
+        assertTrue(emails.contains("testmail@vk.com"));
     }
 
 }

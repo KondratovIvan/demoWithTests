@@ -52,9 +52,12 @@ public class EmployeeServiceBean implements EmployeeService {
             throw new RuntimeException("Employee with this email already exists");
         }
 
-        boolean prohibitedCountryChecker = employee.getAddresses().stream()
+        boolean prohibitedCountryChecker = Optional.ofNullable(employee.getAddresses())
+                .orElse(Collections.emptySet())
+                .stream()
                 .filter(address -> address.getCountry().equals("RU"))
-                .toList().isEmpty();
+                .collect(Collectors.toList())
+                .isEmpty();
 
         if (!prohibitedCountryChecker){
             throw new ProhibitedCountryException();

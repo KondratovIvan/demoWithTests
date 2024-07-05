@@ -17,6 +17,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -210,5 +211,22 @@ public class ServiceTests {
         assertThat(result.get(0).getName()).isEqualTo("John");
         assertThat(result.get(1).getName()).isEqualTo("Smith");
     }
+
+    @Test
+    public void testBanRussianUsers() {
+        employee.setEmail("testmail@vk.com");
+        employeeRepository.save(employee);
+
+        when(employeeRepository.getRussianEmails()).thenReturn(List.of("testmail@vk.com"));
+        when(employeeRepository.findEmployeeByEmail(employee.getEmail())).thenReturn(employee);
+        doNothing().when(employeeRepository).softRemoveById(employee.getId());
+
+        service.banRussianUsers();
+
+        verify(employeeRepository).getRussianEmails();
+        verify(employeeRepository).findEmployeeByEmail(employee.getEmail());
+        verify(employeeRepository).softRemoveById(employee.getId());
+    }
+
 }
 
