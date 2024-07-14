@@ -30,6 +30,3 @@ create table if not exists public.documents
     number      varchar(255) not null,
     uuid        varchar(255)
 );
-
-
-
